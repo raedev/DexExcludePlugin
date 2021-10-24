@@ -60,4 +60,4 @@ Task
 
 ## 示例
 
-![example](https://github.com/raedev/DexExcludePlugin/raw/master/pics/example.jpg)
+![example](https://github.com/raedev/DexExcludePlugin/raw/master/pics/example.png)
