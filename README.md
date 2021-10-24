@@ -1,6 +1,9 @@
 # DexExcludePlugin
 
+[![](https://jitpack.io/v/raedev/DexExcludePlugin.svg)](https://jitpack.io/#raedev/DexExcludePlugin)
+
 `DexExcludePlugin` 是一个用于排除.dex文件中指定class类的gradle插件工具
+
 
 ## 使用
 
