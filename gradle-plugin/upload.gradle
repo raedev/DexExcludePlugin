@@ -1,0 +1,79 @@
+apply plugin: 'maven-publish'
+Properties properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("local.properties")))
+def mavenUrl = properties.getProperty("maven.url")
+def mavenUser = properties.getProperty("maven.user")
+def mavenPwd = properties.getProperty("maven.pwd")
+
+def log(String msg) {
+    println '> Publish.RAE: ' + msg
+}
+
+afterEvaluate {
+    log("publish to geostar maven: [${mavenUrl}]")
+    log("maven artifact: ${ARTIFACT_GROUP}:${ARTIFACT_ID}:${ARTIFACT_VERSION}]")
+    log("maven credentials: ${mavenUser}@${mavenPwd}")
+    if (mavenUser == null || mavenPwd == null) {
+        throw new GradleException("请在local.properties配置好上传到maven的账户和密码：maven.user、maven.pwd")
+    }
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url = mavenUrl
+                allowInsecureProtocol true
+                credentials {
+                    username = mavenUser
+                    password = mavenPwd
+                }
+            }
+        }
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = ARTIFACT_GROUP
+                artifactId = ARTIFACT_ID
+                version = ARTIFACT_VERSION
+                artifact androidSourcesJar
+                pom {
+                    name = artifactId
+                    url = 'https://github.com/raedev'
+                    developers {
+                        developer {
+                            id = 'RAE'
+                            name = 'RAE'
+                            email = 'raedev@qq.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+def cleanPackageCache(String group, String name) {
+    log("Clean local maven cache: ${group}:${name}")
+    def cacheDir = new File(gradle.gradleUserHomeDir, 'caches')
+    def moduleDir = new File(cacheDir, 'modules-2')
+    def regex = '**/' + group + '/**'
+    if (name != null) {
+        regex = '**/' + group + '/' + name + "/**"
+    }
+    DirectoryTree tree = fileTree(dir: moduleDir).include(regex)
+    tree.each { File file ->
+        log('Delete: ' + file.getPath().replace(moduleDir.path, ""))
+        delete file
+    }
+    log('Finish: ' + moduleDir + ", " + regex)
+}
+
+
+publish.doLast {
+    cleanPackageCache(ARTIFACT_GROUP, ARTIFACT_ID)
+    log('Maven publish finish：[' + ARTIFACT_GROUP + ':' + ARTIFACT_ID + ':' + ARTIFACT_VERSION + ']')
+}
+

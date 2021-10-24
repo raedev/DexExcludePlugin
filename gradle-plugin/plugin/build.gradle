@@ -1,0 +1,24 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.smali:dexlib2:2.5.2'
+    compileOnly 'com.android.tools.build:gradle:7.0.3'
+    compileOnly gradleApi()
+}
+
+group 'com.github.raedev'
+
+gradlePlugin {
+    plugins {
+        dexExclude {
+            id = 'com.github.raedev.plugin'
+            implementationClass = 'com.github.raedev.dex.DexExcludePlugin'
+        }
+    }
+}
