@@ -48,10 +48,6 @@ public class DexExcludePlugin implements Plugin<Project> {
                 Log.e("dex exclude rules not found!");
                 return;
             }
-            for (String exclude : mDexExcludeExtension.excludes) {
-                Log.d("exclude：" + exclude);
-            }
-
             BaseAppModuleExtension extension = prj.getExtensions().getByType(BaseAppModuleExtension.class);
             for (BuildType buildType : extension.getBuildTypes()) {
                 registerTask(buildType.getName());
@@ -93,6 +89,9 @@ public class DexExcludePlugin implements Plugin<Project> {
         ExcludeClassHelper.onConfig(this);
         String buildType = task.getName().replaceFirst("dexClassExclude", "");
         List<File> dexFiles = findDexFiles(buildType);
+        for (String exclude : mDexExcludeExtension.excludes) {
+            Log.d("exclude：" + exclude);
+        }
         for (File dexFile : dexFiles) {
             replaceDexFile(dexFile);
         }

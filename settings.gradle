@@ -7,5 +7,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "DexExcluder"
-include ':app'
+include ':example'
 includeBuild("gradle-plugin")

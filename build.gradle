@@ -13,3 +13,8 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task publishToMavenLocal() {
+    group 'publishing'
+    dependsOn gradle.includedBuild("gradle-plugin").task(':plugin:publishMavenJarPublicationToMavenLocal')
+}
