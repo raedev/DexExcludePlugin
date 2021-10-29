@@ -23,7 +23,6 @@ import java.util.Locale;
 
 /**
  * [Main] Exclude Dex Class Plugin
- *
  * @author RAE
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -45,7 +44,7 @@ public class DexExcludePlugin implements Plugin<Project> {
         project.afterEvaluate(prj -> {
             mProject = prj;
             if (mDexExcludeExtension.excludes.size() <= 0) {
-                Log.e("dex exclude rules not found!");
+                Log.e("the dex exclude rules not found!");
                 return;
             }
             BaseAppModuleExtension extension = prj.getExtensions().getByType(BaseAppModuleExtension.class);
@@ -58,7 +57,6 @@ public class DexExcludePlugin implements Plugin<Project> {
 
     /**
      * 创建任务
-     *
      * @param name 构建类型
      */
     private void registerTask(String name) {
@@ -81,7 +79,6 @@ public class DexExcludePlugin implements Plugin<Project> {
 
     /**
      * 执行任务
-     *
      * @param task 任务
      */
     private void doTask(Task task) {
@@ -99,7 +96,6 @@ public class DexExcludePlugin implements Plugin<Project> {
 
     /**
      * 替换Dex文件
-     *
      * @param file 源文件
      */
     private void replaceDexFile(File file) {
@@ -147,13 +143,14 @@ public class DexExcludePlugin implements Plugin<Project> {
     protected List<File> findDexFiles(String buildType) {
         File file = new File(mProject.getBuildDir(), "intermediates/dex/" + buildType.toLowerCase(Locale.ROOT));
         List<File> dexFiles = new ArrayList<>();
-        findFiles(dexFiles, file, "classes.dex");
+        findFiles(dexFiles, file);
         return dexFiles;
     }
 
 
-    private void findFiles(List<File> result, File file, String name) {
-        if (file.isFile()) {
+    private void findFiles(List<File> result, File file) {
+        if (file.isFile() && file.getName().endsWith(".dex")) {
+            result.add(file);
             return;
         }
         File[] files = file.listFiles();
@@ -161,13 +158,13 @@ public class DexExcludePlugin implements Plugin<Project> {
             return;
         }
         for (File item : files) {
-            if (item.getName().equals(name)) {
-                result.add(item);
-                continue;
-            }
             if (item.isDirectory()) {
                 // 递归
-                findFiles(result, item, name);
+                findFiles(result, item);
+                continue;
+            }
+            if (item.isFile() && item.getName().endsWith(".dex")) {
+                result.add(item);
             }
         }
     }

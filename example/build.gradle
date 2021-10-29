@@ -40,4 +40,5 @@ dexExcludePlugin {
     exclude 'androidx'
     exclude 'android.support.v4'
     exclude 'com.google.android.material'
+    include 'com.example.dexexcludedemo'
 }

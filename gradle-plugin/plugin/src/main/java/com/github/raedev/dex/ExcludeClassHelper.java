@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 
 /**
  * 移除类
- *
  * @author RAE
  * @date 2021/10/2021/10/24
  * Copyright (c) https://github.com/raedev All rights reserved.
@@ -76,48 +75,54 @@ final class ExcludeClassHelper {
             return true;
         }
         String className = typeToClassName(type);
+        List<String> includes = sDexExcludePlugin.mDexExcludeExtension.includes;
         List<String> rules = sDexExcludePlugin.mDexExcludeExtension.excludes;
+        boolean result = false;
+        if (includes.size() > 0) {
+            rules = includes;
+            result = true;
+        }
 
         for (String rule : rules) {
             if (rule.endsWith(".**") && matchingAllRule(rule, className)) {
-                // 处理子包
-                if (DEBUG) {
-                    Log.d("排除类：" + className);
-                }
-                return false;
+                return result;
             } else if (rule.endsWith(".*") && matchingPackageRule(rule, className)) {
-                if (DEBUG) {
-                    Log.d("排除类：" + className);
-                }
-                // 处理当前包
-                return false;
+                return result;
             } else if (matchingFullRule(rule, className)) {
-                if (DEBUG) {
-                    Log.d("排除类：" + className);
-                }
-                // 处理特定类
-                return false;
+                return result;
             }
         }
 
-        return true;
+        return !result;
     }
 
     private static boolean matchingFullRule(String rule, String className) {
-        return className.startsWith(rule);
+        boolean success = className.startsWith(rule);
+        if (DEBUG && success) {
+            Log.d("符合规则：" + className);
+        }
+        return success;
     }
 
     private static boolean matchingPackageRule(String rule, String className) {
         rule = rule.replace("*", "");
+        boolean success = false;
         if (className.startsWith(rule)) {
-            return className.replace(rule, "").indexOf(".") <= 0;
+            success = className.replace(rule, "").indexOf(".") <= 0;
         }
-        return false;
+        if (DEBUG && success) {
+            Log.d("符合规则*：" + className);
+        }
+        return success;
     }
 
     private static boolean matchingAllRule(String rule, String className) {
         rule = rule.replace("**", "");
-        return className.startsWith(rule);
+        boolean success = className.startsWith(rule);
+        if (DEBUG && success) {
+            Log.d("符合规则**：" + className);
+        }
+        return success;
     }
 
     private static String typeToClassName(String type) {
