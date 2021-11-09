@@ -74,8 +74,8 @@ final class ExcludeClassHelper {
             return true;
         }
         String className = typeToClassName(type);
-        List<String> includes = sDexExcludePlugin.mDexExcludeExtension.includes;
-        List<String> rules = sDexExcludePlugin.mDexExcludeExtension.excludes;
+        List<String> includes = sDexExcludePlugin.mDexExcludeExtension.getIncludes();
+        List<String> rules = sDexExcludePlugin.mDexExcludeExtension.getExcludes();
         boolean result = false;
         if (includes.size() > 0) {
             rules = includes;

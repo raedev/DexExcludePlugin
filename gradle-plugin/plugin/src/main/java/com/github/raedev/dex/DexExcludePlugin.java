@@ -43,7 +43,7 @@ public class DexExcludePlugin implements Plugin<Project> {
 
         project.afterEvaluate(prj -> {
             mProject = prj;
-            if (mDexExcludeExtension.excludes.size() <= 0 && mDexExcludeExtension.includes.size() <= 0) {
+            if (mDexExcludeExtension.getExcludes().size() <= 0 && mDexExcludeExtension.getIncludes().size() <= 0) {
                 Log.e("a rules not found!");
                 return;
             }
@@ -90,7 +90,7 @@ public class DexExcludePlugin implements Plugin<Project> {
             Log.e("all dex files not found!");
             return;
         }
-        for (String exclude : mDexExcludeExtension.excludes) {
+        for (String exclude : mDexExcludeExtension.getExcludes()) {
             Log.d("exclude rule：" + exclude);
         }
         for (File dexFile : dexFiles) {

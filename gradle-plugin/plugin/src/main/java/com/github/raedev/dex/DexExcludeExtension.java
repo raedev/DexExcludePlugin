@@ -12,21 +12,36 @@ public class DexExcludeExtension {
 
     // exclude 和 include 只能作用其中一个
 
-    List<String> excludes = new ArrayList<>();
-    List<String> includes = new ArrayList<>();
+    private List<String> mExcludes = new ArrayList<>();
+    private List<String> mIncludes = new ArrayList<>();
 
     public void exclude(String rule) {
-        if (!excludes.contains(rule)) {
-            excludes.add(rule);
+        if (!mExcludes.contains(rule)) {
+            mExcludes.add(rule);
         }
     }
 
     public void include(String rule) {
-        if (!includes.contains(rule)) {
-            includes.add(rule);
+        if (!mExcludes.contains(rule)) {
+            mExcludes.add(rule);
         }
     }
 
+    public void excludes(List<String> values) {
+        mExcludes.addAll(values);
+    }
+
+    public void includes(List<String> values) {
+        mIncludes.addAll(values);
+    }
+
+    public List<String> getExcludes() {
+        return mExcludes;
+    }
+
+    public List<String> getIncludes() {
+        return mIncludes;
+    }
 
     public void debug(boolean value) {
         Log.DEBUG = value;
