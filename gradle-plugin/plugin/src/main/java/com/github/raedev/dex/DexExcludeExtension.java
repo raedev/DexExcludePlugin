@@ -29,7 +29,7 @@ public class DexExcludeExtension {
 
 
     public void debug(boolean value) {
-        ExcludeClassHelper.DEBUG = value;
+        Log.DEBUG = value;
     }
 
 }

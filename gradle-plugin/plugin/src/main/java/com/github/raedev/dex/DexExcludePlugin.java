@@ -25,7 +25,7 @@ import java.util.Locale;
  * [Main] Exclude Dex Class Plugin
  * @author RAE
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
+@SuppressWarnings({"ResultOfMethodCallIgnored", "AlibabaUndefineMagicConstant"})
 public class DexExcludePlugin implements Plugin<Project> {
 
     private final PluginDexRewriter mDexRewriter = new PluginDexRewriter();
@@ -43,8 +43,8 @@ public class DexExcludePlugin implements Plugin<Project> {
 
         project.afterEvaluate(prj -> {
             mProject = prj;
-            if (mDexExcludeExtension.excludes.size() <= 0) {
-                Log.e("the dex exclude rules not found!");
+            if (mDexExcludeExtension.excludes.size() <= 0 && mDexExcludeExtension.includes.size() <= 0) {
+                Log.e("a rules not found!");
                 return;
             }
             BaseAppModuleExtension extension = prj.getExtensions().getByType(BaseAppModuleExtension.class);
@@ -62,7 +62,7 @@ public class DexExcludePlugin implements Plugin<Project> {
     private void registerTask(String name) {
         // Register a task
         final String buildType = name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
-        String taskName = String.format("dexClassExclude%s", buildType);
+        String taskName = String.format("dexExclude%s", buildType);
         mProject.getTasks().register(taskName, task -> {
             task.setGroup("dex");
             if ("debug".equalsIgnoreCase(buildType)) {
@@ -84,10 +84,14 @@ public class DexExcludePlugin implements Plugin<Project> {
     private void doTask(Task task) {
         // 初始化Helper
         ExcludeClassHelper.onConfig(this);
-        String buildType = task.getName().replaceFirst("dexClassExclude", "");
+        String buildType = task.getName().replaceFirst("dexExclude", "");
         List<File> dexFiles = findDexFiles(buildType);
+        if (dexFiles.size() <= 0) {
+            Log.e("all dex files not found!");
+            return;
+        }
         for (String exclude : mDexExcludeExtension.excludes) {
-            Log.d("exclude：" + exclude);
+            Log.d("exclude rule：" + exclude);
         }
         for (File dexFile : dexFiles) {
             replaceDexFile(dexFile);
@@ -102,11 +106,10 @@ public class DexExcludePlugin implements Plugin<Project> {
         String shortPath = toShortFile(file);
         try {
             Log.d("exclude dex file : " + shortPath);
-
             DexBackedDexFile loadDexFile = DexFileFactory.loadDexFile(file, Opcodes.getDefault());
             Rewriter<DexFile> rewriter = mDexRewriter.getDexFileRewriter();
             DexFile dexFile = rewriter.rewrite(loadDexFile);
-            if (ExcludeClassHelper.DEBUG) {
+            if (Log.DEBUG) {
                 // 备份原来的dex文件
                 String backup = file.getPath().replace(File.separator + "dex" + File.separator,
                         File.separator + "dex_exclude_backup" + File.separator);
@@ -120,18 +123,9 @@ public class DexExcludePlugin implements Plugin<Project> {
                 file.delete();
             }
             DexFileFactory.writeDexFile(file.getPath(), dexFile);
-            Log.d("exclude dex class finish: " + file.getPath());
+            Log.i("exclude dex class finish: " + file.getPath());
         } catch (IOException e) {
             Log.e("exclude dex file error, path=" + shortPath + "; Error message: " + e.getMessage(), e);
-        }
-    }
-
-    protected String findDexTaskName(String buildType) {
-        //noinspection AlibabaUndefineMagicConstant
-        if ("debug".equalsIgnoreCase(buildType)) {
-            return "mergeProjectDexDebug";
-        } else {
-            return "mergeDex" + buildType;
         }
     }
 
@@ -143,12 +137,11 @@ public class DexExcludePlugin implements Plugin<Project> {
     protected List<File> findDexFiles(String buildType) {
         File file = new File(mProject.getBuildDir(), "intermediates/dex/" + buildType.toLowerCase(Locale.ROOT));
         List<File> dexFiles = new ArrayList<>();
-        findFiles(dexFiles, file);
+        findDexFiles(dexFiles, file);
         return dexFiles;
     }
 
-
-    private void findFiles(List<File> result, File file) {
+    private void findDexFiles(List<File> result, File file) {
         if (file.isFile() && file.getName().endsWith(".dex")) {
             result.add(file);
             return;
@@ -160,7 +153,7 @@ public class DexExcludePlugin implements Plugin<Project> {
         for (File item : files) {
             if (item.isDirectory()) {
                 // 递归
-                findFiles(result, item);
+                findDexFiles(result, item);
                 continue;
             }
             if (item.isFile() && item.getName().endsWith(".dex")) {

@@ -19,7 +19,6 @@ import javax.annotation.Nullable;
  */
 final class ExcludeClassHelper {
 
-    public static boolean DEBUG = false;
 
     @Nullable
     private static DexExcludePlugin sDexExcludePlugin;
@@ -98,7 +97,7 @@ final class ExcludeClassHelper {
 
     private static boolean matchingFullRule(String rule, String className) {
         boolean success = className.startsWith(rule);
-        if (DEBUG && success) {
+        if (Log.DEBUG && success) {
             Log.d("符合规则：" + className);
         }
         return success;
@@ -110,7 +109,7 @@ final class ExcludeClassHelper {
         if (className.startsWith(rule)) {
             success = className.replace(rule, "").indexOf(".") <= 0;
         }
-        if (DEBUG && success) {
+        if (Log.DEBUG && success) {
             Log.d("符合规则*：" + className);
         }
         return success;
@@ -119,7 +118,7 @@ final class ExcludeClassHelper {
     private static boolean matchingAllRule(String rule, String className) {
         rule = rule.replace("**", "");
         boolean success = className.startsWith(rule);
-        if (DEBUG && success) {
+        if (Log.DEBUG && success) {
             Log.d("符合规则**：" + className);
         }
         return success;

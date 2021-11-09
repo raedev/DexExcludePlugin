@@ -10,8 +10,15 @@ import java.io.File;
 final class Log {
 
     public static File BUILD_DIR;
+    public static boolean DEBUG = false;
 
     public static void d(String msg) {
+        if (Log.DEBUG) {
+            System.out.println("> RAE.DexExclude: " + msg);
+        }
+    }
+
+    public static void i(String msg) {
         System.out.println("> RAE.DexExclude: " + msg);
     }
 
