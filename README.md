@@ -31,7 +31,7 @@ buildscript {
 排除指定包的类
 
 ```groovy
-apply plugin: 'com.github.raedev.plugin'
+apply plugin: 'com.github.raedev.plugin.exclude'
 dexExcludePlugin {
     // 是否开启调试输出
     debug false
@@ -51,7 +51,7 @@ dexExcludePlugin {
 只打包配置的类，跟上述`exclude`的模式相互排斥，两种方式只能采用其中一种。
 
 ```groovy
-apply plugin: 'com.github.raedev.plugin'
+apply plugin: 'com.github.raedev.plugin.exclude'
 dexExcludePlugin {
     // 是否开启调试输出
     debug false

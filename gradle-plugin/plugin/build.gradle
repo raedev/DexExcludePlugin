@@ -17,7 +17,7 @@ group 'com.github.raedev'
 gradlePlugin {
     plugins {
         dexExclude {
-            id = 'com.github.raedev.plugin'
+            id = 'com.github.raedev.plugin.exclude'
             implementationClass = 'com.github.raedev.dex.DexExcludePlugin'
         }
     }

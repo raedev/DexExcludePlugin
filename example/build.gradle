@@ -33,7 +33,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 }
 
-apply plugin: 'com.github.raedev.plugin'
+apply plugin: 'com.github.raedev.plugin.exclude'
 
 dexExcludePlugin {
     debug false
