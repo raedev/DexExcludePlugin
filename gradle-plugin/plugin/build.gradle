@@ -22,16 +22,27 @@ gradlePlugin {
         }
     }
 }
-
 afterEvaluate {
     apply plugin: 'maven-publish'
     publishing {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream(new File(rootProject.rootDir.getPath(), 'local.properties')))
+        repositories {
+            maven {
+                url = properties.getProperty('mvn.url')
+                allowInsecureProtocol true
+                credentials {
+                    username = properties.getProperty('mvn.username')
+                    password = properties.getProperty('mvn.password')
+                }
+            }
+        }
         publications {
             mavenJar(MavenPublication) {
                 from components.java
                 groupId = 'com.github.raedev'
                 artifactId = 'DexExcludePlugin'
-                version = '1.0.0'
+                version = '1.0.1'
                 pom {
                     name = artifactId
                     url = 'https://github.com/raedev'
